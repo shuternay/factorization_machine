@@ -1,0 +1,22 @@
+[package]
+name = "factorization_machine"
+version = "0.1.0"
+authors = ["Sergey Kiselev <kiselev.sg@gmail.com>"]
+
+[lib]
+name = "factorization_machine"
+path = "src/lib.rs"
+
+[[bin]]
+name = "factorization_machine"
+path = "src/main.rs"
+
+[dependencies]
+argparse = "0.2.1"
+csv = "1.0.0-beta.5"
+rand = "*"
+rayon = "1.0"
+serde = "1.0"
+serde_derive = "1.0"
+serde_json = "1.0"
+clippy = { version = "*", optional = true }
