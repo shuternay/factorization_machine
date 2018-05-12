@@ -194,7 +194,7 @@ impl Model {
                     .map(|(r, p)| loss.loss_grad(r.target, *p)).sum::<f32>();
 
                 let new_constant_weight = (self.constant_weight * grad_grad_sum - grad_sum) / 
-                    (grad_grad_sum + l2_regularization);
+                    (grad_grad_sum + (dataset.records.len() as f32) * l2_regularization);
 
                 predictions.iter_mut().for_each(|p| *p += new_constant_weight - self.constant_weight);
 
@@ -217,7 +217,7 @@ impl Model {
 
                 let new_linear_weight =
                     (self.linear_weights[feature as usize] * grad_grad_sum - grad_sum) / 
-                    (grad_grad_sum + l2_regularization);
+                    (grad_grad_sum + (dataset.records.len() as f32) * l2_regularization);
                 
                 for record in transposed_dataset[feature].iter() {
                     predictions[record.index] += 
@@ -236,6 +236,7 @@ impl Model {
                          .map(|f| self.get_pair_weight(factor, f) * f.value).sum()).collect();
 
                 unsafe {
+                    // a dirty hack to bypass Rust thread safety protection
                     let predictions_ptr = &mut predictions as *mut Vec<f32> as usize;
                     let factors_sum_ptr = &mut factors_sum as *mut Vec<f32> as usize;
                     let model_ptr = self as *mut Model as usize;
@@ -248,8 +249,7 @@ impl Model {
                         let mut grad_grad_sum = 0.;
                         let mut grad_sum = 0.;
                         for record in transposed_dataset[feature].iter() {
-
-                            let mut prediction_grad = record.value * 
+                            let prediction_grad = record.value * 
                                 (factors_sum[record.index] - 
                                  self.pair_weights[feature as usize][factor as usize] * record.value);
                         
@@ -259,7 +259,7 @@ impl Model {
 
                         let new_pair_weight =
                             (self_model.pair_weights[feature as usize][factor as usize] * grad_grad_sum - grad_sum) / 
-                            (grad_grad_sum + l2_regularization);
+                            (grad_grad_sum + (dataset.records.len() as f32) * l2_regularization);
 
                         for record in transposed_dataset[feature].iter() {
                             let mut h = record.value * 
