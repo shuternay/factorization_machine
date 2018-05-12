@@ -33,11 +33,11 @@
 
 Алгоритм реализован по статье от [libFM](https://www.csie.ntu.edu.tw/~b97053/paper/Factorization%20Machines%20with%20libFM.pdf).
 
-В теории ALS можно сделать для произвольной loss-функции, если посчитать вторую производную loss-функции по предсказанию, тогда формула (22) в статье будет выглядеть так:
+Можно попытаться сделать ALS для произвольной loss-функции, если посчитать вторую производную loss-функции по предсказанию. Тогда формула (22) в статье будет выглядеть так:
 
-!(https://latex.codecogs.com/gif.latex?%24%24%20%5Ctheta%5E*%20%3D%20%5Cfrac%20%7B%5Ctheta%20%5Csum_%7Bi%3D1%7D%5En%20h_%5Ctheta%5E2%28%5Cvec%20x_i%29%20%5Cmathcal%7BL%7D_%7B%5Chat%20y%7D%27%27%28%5Cvec%20x_i%29%29%20-%20%5Csum_%7Bi%3D1%7D%5En%20h_%5Ctheta%28%5Cvec%20x_i%29%20%5Cmathcal%7BL%7D_%7B%5Chat%20y%7D%27%28%5Cvec%20x_i%29%29%7D%20%7B%5Csum_%7Bi%3D1%7D%5En%20h_%5Ctheta%5E2%28%5Cvec%20x%29%20%5Cmathcal%7BL%7D_%7B%5Chat%20y%7D%27%27%28%5Cvec%20x_i%29%20&plus;%20%5Clambda_%5Ctheta%7D%20%24%24)
+![.](https://latex.codecogs.com/gif.latex?%24%24%20%5Ctheta%5E*%20%3D%20%5Cfrac%20%7B%5Ctheta%20%5Csum_%7Bi%3D1%7D%5En%20h_%5Ctheta%5E2%28%5Cvec%20x_i%29%20%5Cmathcal%7BL%7D_%7B%5Chat%20y%7D%27%27%28%5Cvec%20x_i%29%20-%20%5Csum_%7Bi%3D1%7D%5En%20h_%5Ctheta%28%5Cvec%20x_i%29%20%5Cmathcal%7BL%7D_%7B%5Chat%20y%7D%27%28%5Cvec%20x_i%29%7D%20%7B%5Csum_%7Bi%3D1%7D%5En%20h_%5Ctheta%5E2%28%5Cvec%20x%29%20%5Cmathcal%7BL%7D_%7B%5Chat%20y%7D%27%27%28%5Cvec%20x_i%29%20&plus;%20%5Clambda_%5Ctheta%7D%20%24%24)
 
-Эта штука взрывается, если вторая производная маленькая (mae или logistic при предсказаниях близких к правильному), но если вторую производную ограничить снизу константой вроде 0.1~1.0, то вроде работает. На нормальные эксперименты с этой штукой времени не хватило.
+Эта штука взрывается, если вторая производная маленькая (mae или logistic при предсказаниях близких к правильному), но если её ограничить снизу константой вроде 0.1~1.0, то вроде работает. На нормальные эксперименты времени не хватило.
 
 # Установка
 
@@ -97,7 +97,7 @@ cargo run -q --release -- -p -d datasets/test_20m_wo_time.csv --data_type csv --
 
 ## Movielens
 
-Для vowpal wabbit использовался этот бенчмарк с заменой датасета на 20m.
+Для vowpal wabbit использовался [этот](https://github.com/JohnLangford/vowpal_wabbit/tree/master/demo/movielens) бенчмарк с заменой датасета на 20m.
 Результаты:
 ```
 linear test MAE is 0.652
@@ -139,7 +139,7 @@ test mse: 0.811
 Минимум на тесте около 17-й итерации.
 
 
-SGD, 8 факторов, lr 0.01:
+SGD, 8 факторов, lr 0.03:
 ```
 train mse: 0.749
 test mse: 0.807
